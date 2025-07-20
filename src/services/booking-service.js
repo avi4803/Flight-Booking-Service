@@ -18,8 +18,9 @@ async function createBooking(data) {
         if(data.noofSeats > flightData.totalSeats) {
             throw new AppError('Not enough seats available', StatusCodes.BAD_REQUEST);
         }
-        const totalBillingAmount = data.noofSeats * flightData.price;
+        const totalBillingAmount = data.noOfSeats * flightData.price;
         const bookingPayload = {...data, totalCost: totalBillingAmount};
+        console.log()
         const booking = await bookingRepository.create(bookingPayload, transaction);
 
         await axios.patch(`http://${ServerConfig.FLIGHT_SERVICE}/api/v1/flights/seats/${data.flightId}`, {
@@ -59,7 +60,7 @@ async function makePayment(data) {
         // we assume here that payment is successful
         await bookingRepository.update(data.bookingId, {status: BOOKED}, transaction);
         Queue.sendData({
-            recepientEmail: 'cs191297@gmail.com',
+            to: 'avinashn157@gmail.com',
             subject: 'Flight booked',
             text: `Booking successfully done for the booking ${data.bookingId}`
         });
